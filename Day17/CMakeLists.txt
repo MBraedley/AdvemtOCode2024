@@ -1,0 +1,7 @@
+﻿add_executable(Day17 "Day17.cpp" "Day17.h")
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/input.txt")
+	message("Copying input file")
+	configure_file("input.txt" "./input.txt" COPYONLY)
+else()
+	message(WARNING "Input file not found")
+endif()
