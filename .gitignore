@@ -13,3 +13,4 @@ CMakeUserPresets.json
 
 input.txt
 /.vs
+out
