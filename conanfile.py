@@ -4,7 +4,7 @@ import aocd
 import os
 
 class AdventOfCode2024(ConanFile):
-    name = "AdventOfCode2024"
+    name = "aoc_2024"
     version = "0.0.1"
     settings = "os", "compiler", "build_type", "arch"
     package_type = "application"
