@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "ctre.hpp"
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -14,6 +16,7 @@
 #include <numeric>
 #include <deque>
 #include <queue>
+#include <compare>
 
 namespace utils
 {
@@ -26,9 +29,46 @@ utils::Connections operator&(const utils::Connections& lhs, const utils::Connect
 
 namespace utils
 {
+	namespace detail
+	{
+		template<std::size_t... indices>
+		constexpr auto GetMatchesHelper( auto matchResults, std::index_sequence<indices...> ) -> std::array<std::string_view, sizeof...(indices)>
+		{
+			return { { matchResults.get<indices>().view()...}};
+		}
+
+		template<std::size_t count>
+		constexpr std::array<std::string_view, count> GetMatches( auto matchResults )
+		{
+			return GetMatchesHelper( matchResults, std::make_index_sequence<count>{} );
+		}
+	}
+
 	std::vector<std::string> ReadInput(const std::filesystem::path& input);
 
+	[[deprecated]]
 	std::vector<std::vector<std::string>> ReadFormattedInput(const std::filesystem::path& input, const std::regex& format);
+
+	template<std::string_view regex>
+	std::vector<std::vector<std::string>> ReadFormattedInput(const std::filesystem::path& input)
+	{
+		using matcher = ctre::match<regex>;
+		
+		std::vector<std::vector<std::string>> ret;
+		std::ifstream istrm(input);
+		std::string line;
+		while (std::getline(istrm, line))
+		{
+			auto results = matcher(line);
+			if ( results )
+			{
+				auto matches = detail::GetMatches<results.count()>(results);
+				ret.emplace_back( matches.begin(), matches.end() );
+			}
+		}
+
+		return ret;
+	}
 
 	std::vector<std::string> Tokenize(std::string str, char delim);
 
