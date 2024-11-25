@@ -49,10 +49,10 @@ namespace utils
 	[[deprecated]]
 	std::vector<std::vector<std::string>> ReadFormattedInput(const std::filesystem::path& input, const std::regex& format);
 
-	template<std::string_view regex>
+	template<const std::string_view& Regex>
 	std::vector<std::vector<std::string>> ReadFormattedInput(const std::filesystem::path& input)
 	{
-		using matcher = ctre::match<regex>;
+		auto matcher = ctre::match<Regex>;
 		
 		std::vector<std::vector<std::string>> ret;
 		std::ifstream istrm(input);
