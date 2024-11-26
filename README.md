@@ -12,7 +12,7 @@ and will be using the [Conan](https://conan.io/) package manager as I'm already 
 - [Python](https://www.python.org/)
 - [Conan](https://conan.io/) - `pip install conan`
 - [CMake](https://cmake.org/) - `pip install cmake`
-- [aocd](https://github.com/wimglenn/advent-of-code-data) - `pip install aocd`, `pip install browser-cookie3`
+- [aocd](https://github.com/wimglenn/advent-of-code-data) - `pip install advent-of-code-data`, `pip install browser-cookie3`
 
 All other C++ dependencies (such as ctre) are gathered with Conan
 
