@@ -1,7 +1,0 @@
-﻿add_executable(Day02 "Day02.cpp" "Day02.h")
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/input.txt")
-	message("Copying input file")
-	configure_file("input.txt" "./input.txt" COPYONLY)
-else()
-	message(WARNING "Input file not found")
-endif()
