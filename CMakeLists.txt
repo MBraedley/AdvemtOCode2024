@@ -9,7 +9,7 @@ if (MSVC)
   add_compile_definitions(NOMINMAX _CRT_SECURE_NO_WARNINGS)
 endif()
 
-project ("AdventOfCode2023")
+project ("AdventOfCode2024")
 
 function(add_aoc_day day_name)
     add_executable(${day_name} "src/${day_name}/${day_name}.cpp" "src/${day_name}/${day_name}.h")
