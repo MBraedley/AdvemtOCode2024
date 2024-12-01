@@ -15,7 +15,7 @@ function(add_aoc_day day_name)
     add_executable(${day_name} "src/${day_name}/${day_name}.cpp" "src/${day_name}/${day_name}.h")
     
     target_include_directories(${day_name} PUBLIC "src/Utils")
-    target_link_libraries(${day_name} PUBLIC Utils)
+    target_link_libraries(${day_name} PUBLIC Utils ctre::ctre)
     
     install(TARGETS ${day_name} DESTINATION "."
         RUNTIME DESTINATION bin
@@ -23,11 +23,11 @@ function(add_aoc_day day_name)
         LIBRARY DESTINATION lib
         )
 
-    if (EXISTS "src/${day_name}/input.txt")
-        message("Copying input file")
-        configure_file("src/${day_name}/input.txt" "./input.txt" COPYONLY)
+    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/${day_name}/input.txt")
+        message("Copying input file for ${day_name}")
+        configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/${day_name}/input.txt" "${CMAKE_CURRENT_BINARY_DIR}/${day_name}_input.txt" COPYONLY)
     else()
-        message(WARNING "Input file not found")
+        message(WARNING "Input file not found: ${CMAKE_CURRENT_SOURCE_DIR}/src/${day_name}/input.txt" )
     endif()
 endfunction()
 

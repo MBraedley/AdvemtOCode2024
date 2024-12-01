@@ -4,6 +4,7 @@
 
 #include "ctre.hpp"
 
+#include <chrono>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -50,7 +51,7 @@ namespace utils
 	std::vector<std::vector<std::string>> ReadFormattedInput(const std::filesystem::path& input, const std::regex& format);
 
 	template<const std::string_view& Regex>
-	std::vector<std::vector<std::string>> ReadFormattedInput(const std::filesystem::path& input)
+	constexpr std::vector<std::vector<std::string>> ReadFormattedInput(const std::filesystem::path& input)
 	{
 		auto matcher = ctre::match<Regex>;
 		
