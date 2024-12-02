@@ -30,6 +30,9 @@ utils::Connections operator&(const utils::Connections& lhs, const utils::Connect
 
 namespace utils
 {
+	template<std::size_t N>
+	using RegexStr = ctll::fixed_string<N>;
+
 	namespace detail
 	{
 		template<std::size_t... indices>
@@ -50,7 +53,7 @@ namespace utils
 	[[deprecated]]
 	std::vector<std::vector<std::string>> ReadFormattedInput(const std::filesystem::path& input, const std::regex& format);
 
-	template<const std::string_view& Regex>
+	template<ctll::fixed_string Regex>
 	constexpr std::vector<std::vector<std::string>> ReadFormattedInput(const std::filesystem::path& input)
 	{
 		auto matcher = ctre::match<Regex>;

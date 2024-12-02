@@ -5,7 +5,7 @@
 #include "Utils.h"
 
 #include <ranges>
-#include <unordered_map>
+#include <algorithm>
 #include <cassert>
 
 int main()
@@ -38,12 +38,7 @@ int main()
 			return std::abs(lhs - rhs);
 		});
 
-	//auto sum = std::views::take(diffs);
-	std::uint32_t sum = 0;
-	for (auto val : diffs)
-	{
-		sum += val;
-	}
+	auto sum = std::accumulate(diffs.begin(), diffs.end(), 0);
 
 	utils::PrintResult(sum, startTime);
 
