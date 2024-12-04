@@ -194,13 +194,13 @@ utils::Connections operator&(const utils::Connections& lhs, const utils::Connect
 	return ret;
 }
 
-utils::Pos operator+(const utils::Pos& lhs, const utils::Pos& rhs)
+constexpr utils::Pos operator+(const utils::Pos& lhs, const utils::Pos& rhs)
 {
 	utils::Pos ret(lhs.X + rhs.X, lhs.Y + rhs.Y);
 	return ret;
 }
 
-utils::Pos operator-(const utils::Pos& lhs, const utils::Pos& rhs)
+constexpr utils::Pos operator-(const utils::Pos& lhs, const utils::Pos& rhs)
 {
 	utils::Pos ret(lhs.X - rhs.X, lhs.Y - rhs.Y);
 	return ret;

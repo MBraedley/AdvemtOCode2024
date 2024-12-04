@@ -126,7 +126,7 @@ namespace utils
 	class Pos
 	{
 	public:
-		Pos(int x, int y) :
+		constexpr Pos(int x, int y) :
 			X(x), Y(y)
 		{}
 
@@ -138,7 +138,7 @@ namespace utils
 		std::set<Pos> GetNeighbours(const Connections& connections, const std::vector<std::string>& map);
 		int GetManDistance(const Pos& other);
 
-		std::strong_ordering operator<=>(const utils::Pos& rhs) const
+		constexpr std::strong_ordering operator<=>(const utils::Pos& rhs) const
 		{
 			if (X == rhs.X)
 			{
@@ -150,17 +150,17 @@ namespace utils
 			}
 		}
 
-		bool operator==(const utils::Pos& rhs) const
+		constexpr bool operator==(const utils::Pos& rhs) const
 		{
 			return X == rhs.X && Y == rhs.Y;
 		}
 
-		bool operator!=(const utils::Pos& rhs) const
+		constexpr bool operator!=(const utils::Pos& rhs) const
 		{
 			return !(*this == rhs);
 		}
 	};
 }
 
-utils::Pos operator+(const utils::Pos& lhs, const utils::Pos& rhs);
-utils::Pos operator-(const utils::Pos& lhs, const utils::Pos& rhs);
+constexpr utils::Pos operator+(const utils::Pos& lhs, const utils::Pos& rhs);
+constexpr utils::Pos operator-(const utils::Pos& lhs, const utils::Pos& rhs);
