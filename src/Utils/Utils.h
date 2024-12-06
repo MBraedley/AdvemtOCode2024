@@ -126,12 +126,13 @@ namespace utils
 	class Pos
 	{
 	public:
+		constexpr Pos() = default;
 		constexpr Pos(int x, int y) :
 			X(x), Y(y)
 		{}
 
-		int X;
-		int Y;
+		int X = 0;
+		int Y = 0;
 
 		std::set<Pos> GetUnboundedNeighbours(bool includeDiagonals = true);
 		std::set<Pos> GetNeighbours(const std::vector<std::string>& map, bool includeDiagonals = true);
