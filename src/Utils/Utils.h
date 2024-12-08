@@ -22,6 +22,7 @@
 namespace utils
 {
 	struct Connections;
+	class Pos;
 }
 
 bool operator==(const utils::Connections& lhs, const utils::Connections& rhs);
@@ -74,7 +75,7 @@ namespace utils
 		return ret;
 	}
 
-	std::vector<std::string> Tokenize(std::string str, char delim);
+	std::vector<std::string> Tokenize(const std::string& str, char delim);
 
 	std::vector<std::string> Transpose(const std::vector<std::string>& grid);
 
@@ -129,7 +130,8 @@ namespace utils
 		constexpr Pos() = default;
 		constexpr Pos(int x, int y) :
 			X(x), Y(y)
-		{}
+		{
+		}
 
 		int X = 0;
 		int Y = 0;
@@ -151,17 +153,18 @@ namespace utils
 			}
 		}
 
-		constexpr bool operator==(const utils::Pos& rhs) const
-		{
-			return X == rhs.X && Y == rhs.Y;
-		}
-
-		constexpr bool operator!=(const utils::Pos& rhs) const
-		{
-			return !(*this == rhs);
-		}
+		constexpr bool operator==(const utils::Pos& rhs) const = default;
 	};
 }
 
-constexpr utils::Pos operator+(const utils::Pos& lhs, const utils::Pos& rhs);
-constexpr utils::Pos operator-(const utils::Pos& lhs, const utils::Pos& rhs);
+constexpr utils::Pos operator+(const utils::Pos& lhs, const utils::Pos& rhs)
+{
+	utils::Pos ret(lhs.X + rhs.X, lhs.Y + rhs.Y);
+	return ret;
+}
+
+constexpr utils::Pos operator-(const utils::Pos& lhs, const utils::Pos& rhs)
+{
+	utils::Pos ret(lhs.X - rhs.X, lhs.Y - rhs.Y);
+	return ret;
+}
