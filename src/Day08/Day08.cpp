@@ -71,30 +71,30 @@ int main()
 
 	for (const auto& [_, ants] : antennas)
 	{
-		for (std::size_t i = 0; i < ants.size() - 1; i++)
-		{
-			for (std::size_t j = i + 1; j < ants.size(); j++)
-			{
-				utils::Pos diff = ants[j] - ants[i];
-				
-				utils::Pos node1 = ants[i] - diff;
-				while (inMap(node1))
-				{
-					antinodes.insert(node1);
-					node1 = node1 - diff;
-				}
-
-				utils::Pos node2 = ants[j] + diff;
-				while (inMap(node2))
-				{
-					antinodes.insert(node2);
-					node2 = node2 + diff;
-				}
-			}
-		}
-
 		if (ants.size() > 1)
 		{
+			for (std::size_t i = 0; i < ants.size() - 1; i++)
+			{
+				for (std::size_t j = i + 1; j < ants.size(); j++)
+				{
+					utils::Pos diff = ants[j] - ants[i];
+				
+					utils::Pos node1 = ants[i] - diff;
+					while (inMap(node1))
+					{
+						antinodes.insert(node1);
+						node1 = node1 - diff;
+					}
+
+					utils::Pos node2 = ants[j] + diff;
+					while (inMap(node2))
+					{
+						antinodes.insert(node2);
+						node2 = node2 + diff;
+					}
+				}
+			}
+
 			antinodes.insert(ants.begin(), ants.end());
 		}
 	}
