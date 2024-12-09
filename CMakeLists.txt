@@ -3,7 +3,7 @@
 #
 cmake_minimum_required (VERSION 3.15)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 
 if (MSVC)
   add_compile_definitions(NOMINMAX _CRT_SECURE_NO_WARNINGS)
