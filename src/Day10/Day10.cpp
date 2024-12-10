@@ -4,7 +4,9 @@
 #include "Day10.h"
 #include "Utils.h"
 
+#include <stack>
 #include <ranges>
+#include <functional>
 
 int main()
 {
@@ -24,7 +26,8 @@ int main()
 
 	auto getNextStep = [&]( const std::set<utils::Pos>& points, std::int8_t nextVal ) -> std::set<utils::Pos>
 		{
-			auto neighbours = std::views::all( map )
+			return std::views::keys(
+				std::views::all( map )
 				| std::views::filter( [nextVal]( const std::pair<utils::Pos, std::int8_t>& pos ) -> bool
 					{
 						return pos.second == nextVal;
@@ -40,19 +43,16 @@ int main()
 						}
 
 						return false;
-					} )
-				| std::ranges::to<std::map<utils::Pos, std::int8_t>>();
-
-			return std::views::keys( neighbours ) | std::ranges::to<std::set<utils::Pos>>();
+					} ) )
+				| std::ranges::to<std::set<utils::Pos>>();
 		};
 
-	auto trailHeads = std::views::all( map )
-		| std::views::filter( []( const std::pair<utils::Pos, std::int8_t>& pos ) -> bool { return pos.second == 0; } )
-		| std::ranges::to<std::map<utils::Pos, std::int8_t>>();
+	auto trailHeads = std::views::keys( std::views::all( map )
+		| std::views::filter( []( const std::pair<utils::Pos, std::int8_t>& pos ) -> bool { return pos.second == 0; } ) );
 
 	std::uint32_t totalScore = 0;
 
-	for( const auto& [head, _] : trailHeads )
+	for( const auto& head : trailHeads )
 	{
 		std::set<utils::Pos> points;
 		points.insert( head );
@@ -68,6 +68,42 @@ int main()
 	}
 
 	utils::PrintResult( totalScore, startTime );
+
+	//Part 2
+
+	std::uint32_t totalRating = 0;
+
+	std::function<void( std::stack<utils::Pos>& )> findTrail;
+	findTrail = [&]( std::stack<utils::Pos>& trail )
+		{
+			std::set<utils::Pos> points;
+			points.insert( trail.top() );
+			points = getNextStep( points, trail.size() );
+
+			if( trail.size() == 9 )
+			{
+				totalRating += points.size();
+			}
+			else
+			{
+				for( const auto& p : points )
+				{
+					trail.push( p );
+					findTrail( trail );
+					trail.pop();
+				}
+			}
+		};
+
+	for( const auto& head : trailHeads )
+	{
+		std::stack<utils::Pos> trail;
+		trail.push( head );
+
+		findTrail( trail );
+	}
+
+	utils::PrintResult( totalRating, startTime );
 
 	return 0;
 }
