@@ -136,10 +136,10 @@ namespace utils
 		int X = 0;
 		int Y = 0;
 
-		std::set<Pos> GetUnboundedNeighbours(bool includeDiagonals = true);
-		std::set<Pos> GetNeighbours(const std::vector<std::string>& map, bool includeDiagonals = true);
-		std::set<Pos> GetNeighbours(const Connections& connections, const std::vector<std::string>& map);
-		int GetManDistance(const Pos& other);
+		std::set<Pos> GetUnboundedNeighbours(bool includeDiagonals = true) const;
+		std::set<Pos> GetNeighbours(const std::vector<std::string>& map, bool includeDiagonals = true) const;
+		std::set<Pos> GetNeighbours(const Connections& connections, const std::vector<std::string>& map) const;
+		int GetManDistance(const Pos& other) const;
 
 		constexpr std::strong_ordering operator<=>(const utils::Pos& rhs) const
 		{

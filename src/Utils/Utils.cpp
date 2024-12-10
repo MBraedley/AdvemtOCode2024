@@ -77,7 +77,7 @@ void utils::PrintGrid(const std::vector<std::string>& grid)
 	std::cout << "\n";
 }
 
-std::set<utils::Pos> utils::Pos::GetUnboundedNeighbours(bool includeDiagonals)
+std::set<utils::Pos> utils::Pos::GetUnboundedNeighbours(bool includeDiagonals) const
 {
 	std::set<Pos> ret;
 	ret.insert(*this + Pos(0, -1));
@@ -96,7 +96,7 @@ std::set<utils::Pos> utils::Pos::GetUnboundedNeighbours(bool includeDiagonals)
 	return ret;
 }
 
-std::set<utils::Pos> utils::Pos::GetNeighbours(const std::vector<std::string>& map, bool includeDiagonals )
+std::set<utils::Pos> utils::Pos::GetNeighbours(const std::vector<std::string>& map, bool includeDiagonals ) const
 {
 	std::set<Pos> ret;
 	auto addPoint = [&](const Pos& p)
@@ -124,7 +124,7 @@ std::set<utils::Pos> utils::Pos::GetNeighbours(const std::vector<std::string>& m
 	return ret;
 }
 
-std::set<utils::Pos> utils::Pos::GetNeighbours(const utils::Connections& connections, const std::vector<std::string>& map)
+std::set<utils::Pos> utils::Pos::GetNeighbours(const utils::Connections& connections, const std::vector<std::string>& map) const
 {
 	std::set<Pos> ret;
 	auto addPoint = [&](const Pos& p)
@@ -159,7 +159,7 @@ std::set<utils::Pos> utils::Pos::GetNeighbours(const utils::Connections& connect
 	return ret;
 }
 
-int utils::Pos::GetManDistance(const utils::Pos& other)
+int utils::Pos::GetManDistance(const utils::Pos& other) const
 {
 	return std::abs(X - other.X) + std::abs(Y - other.Y);
 }
