@@ -23,9 +23,22 @@ function(add_aoc_day day_name)
         LIBRARY DESTINATION lib
         )
 
-    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/${day_name}/input.txt")
+    set(inputFile "${CMAKE_CURRENT_SOURCE_DIR}/src/${day_name}/input.txt")
+    if (EXISTS ${inputFile})
         message("Copying input file for ${day_name}")
-        configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/${day_name}/input.txt" "${CMAKE_CURRENT_BINARY_DIR}/${day_name}_input.txt" COPYONLY)
+        configure_file("${inputFile}" "${CMAKE_CURRENT_BINARY_DIR}/${day_name}_input.txt" COPYONLY)
+
+        set(headerFile "${CMAKE_CURRENT_SOURCE_DIR}/src/${day_name}/input.h")
+        file(READ ${inputFile} filedata)
+
+        string(REPLACE "\n" "\\n\"\n\t\"" filedata ${filedata})
+
+        file(WRITE ${headerFile} "")
+        file(APPEND ${headerFile} "#pragma once\n\n")
+        file(APPEND ${headerFile} "#include <string_view>\n\n")
+        file(APPEND ${headerFile} "constexpr std::string_view ${day_name}_input{\n\t\"${filedata}\"\n};\n" )
+
+        target_sources(${day_name} PRIVATE ${headerFile})
     else()
         message(WARNING "Input file not found: ${CMAKE_CURRENT_SOURCE_DIR}/src/${day_name}/input.txt" )
     endif()

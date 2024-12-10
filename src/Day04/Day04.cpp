@@ -3,14 +3,14 @@
 
 #include "Day04.h"
 #include "Utils.h"
+#include "input.h"
 
 #include <array>
+#include <ranges>
 
-int main()
+constexpr std::size_t Part1( std::string_view inputStr )
 {
-	auto startTime = std::chrono::system_clock::now();
-
-	auto input = utils::ReadInput( "../Day04_input.txt" );
+	std::vector<std::string> input = inputStr | std::views::split( '\n' ) | std::ranges::to<std::vector<std::string>>();
 
 	auto withinGrid = [&]( const utils::Pos& pos ) -> bool
 		{
@@ -58,21 +58,30 @@ int main()
 		}
 	}
 
-	utils::PrintResult( count, startTime );
+	return count;
+}
 
-	//Part 2
+constexpr std::size_t Part2( std::string_view inputStr )
+{
+	std::vector<std::string> input = inputStr | std::views::split( '\n' ) | std::ranges::to<std::vector<std::string>>();
+
 	utils::Pos topLeft( -1, -1 );
 	utils::Pos topRight( 1, -1 );
 	utils::Pos bottomLeft( -1, 1 );
 	utils::Pos bottomRight( 1, 1 );
 
+	auto withinGrid = [&]( const utils::Pos& pos ) -> bool
+		{
+			return pos.Y >= 0 && pos.Y < input.size() && pos.X >= 0 && pos.X < input[pos.Y].size();
+		};
+
 	auto checkForX_MAS = [&]( const utils::Pos& startPos ) -> bool
 		{
 			if( withinGrid( startPos ) && input[startPos.Y][startPos.X] == 'A'
-				&& withinGrid(startPos + topLeft)
-				&& withinGrid(startPos + topRight)
-				&& withinGrid(startPos + bottomLeft)
-				&& withinGrid(startPos + bottomRight) )
+				&& withinGrid( startPos + topLeft )
+				&& withinGrid( startPos + topRight )
+				&& withinGrid( startPos + bottomLeft )
+				&& withinGrid( startPos + bottomRight ) )
 			{
 				auto tl = startPos + topLeft;
 				auto tr = startPos + topRight;
@@ -88,7 +97,7 @@ int main()
 			}
 		};
 
-	count = 0;
+	std::size_t count = 0;
 
 	for( std::size_t y = 0; y < input.size(); y++ )
 	{
@@ -101,7 +110,41 @@ int main()
 		}
 	}
 
-	utils::PrintResult( count, startTime );
+	return count;
+}
+
+int main()
+{
+	auto startTime = std::chrono::system_clock::now();
+
+	constexpr std::string_view sampleInput{
+		R"(MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX)"
+	};
+
+	constexpr std::size_t p1Sample = Part1( sampleInput );
+	utils::PrintResult( p1Sample, startTime );
+
+	std::size_t p1Count = Part1( Day04_input );
+
+	utils::PrintResult( p1Count, startTime);
+
+	//Part 2
+
+	constexpr std::size_t p2Sample = Part2( sampleInput );
+	utils::PrintResult( p2Sample, startTime );
+
+	std::size_t p2Count = Part2( Day04_input );
+
+	utils::PrintResult( p2Count, startTime );
 
 	return 0;
 }
