@@ -12,6 +12,7 @@ _deps
 CMakeUserPresets.json
 
 input.txt
+input.h
 /.vs
 /.vscode
 /out

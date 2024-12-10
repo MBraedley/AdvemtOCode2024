@@ -139,7 +139,15 @@ namespace utils
 		std::set<Pos> GetUnboundedNeighbours(bool includeDiagonals = true) const;
 		std::set<Pos> GetNeighbours(const std::vector<std::string>& map, bool includeDiagonals = true) const;
 		std::set<Pos> GetNeighbours(const Connections& connections, const std::vector<std::string>& map) const;
-		int GetManDistance(const Pos& other) const;
+		constexpr int GetManDistance( const Pos& other ) const
+		{
+			auto abs = []( int i ) -> int
+				{
+					return (i >= 0 ? i : -i);
+				};
+
+			return abs( X - other.X ) + abs( Y - other.Y );
+		}
 
 		constexpr std::strong_ordering operator<=>(const utils::Pos& rhs) const
 		{

@@ -159,11 +159,6 @@ std::set<utils::Pos> utils::Pos::GetNeighbours(const utils::Connections& connect
 	return ret;
 }
 
-int utils::Pos::GetManDistance(const utils::Pos& other) const
-{
-	return std::abs(X - other.X) + std::abs(Y - other.Y);
-}
-
 bool operator==(const utils::Connections& lhs, const utils::Connections& rhs)
 {
 	return lhs.north == rhs.north
