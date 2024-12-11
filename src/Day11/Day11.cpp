@@ -6,12 +6,13 @@
 
 #include <list>
 #include <functional>
+#include <ranges>
 
 int main()
 {
 	auto startTime = std::chrono::system_clock::now();
-
-	std::list<std::uint64_t> stones;
+	
+	std::map<std::uint64_t, std::size_t> stones;
 
 	std::filesystem::path inputFile("../Day11_input.txt");
 
@@ -19,7 +20,7 @@ int main()
 	std::uint64_t stone;
 	while (fileStrm >> stone)
 	{
-		stones.push_back(stone);
+		stones[stone]++;
 	}
 
 	auto shouldSplit = [](std::uint64_t stone) -> bool
@@ -27,57 +28,47 @@ int main()
 			return std::to_string(stone).size() % 2 == 0;
 		};
 
-	auto splitStone = [&](std::list<std::uint64_t>::iterator iter)
+	auto splitStone = [&]( std::uint64_t stone ) -> std::pair<std::uint64_t, std::uint64_t>
 		{
-			std::string stoneVal = std::to_string(*iter);
+			std::string stoneVal = std::to_string( stone );
 			std::uint64_t first = std::stoull(stoneVal.substr(0, stoneVal.size() / 2));
 			std::uint64_t second = std::stoull(stoneVal.substr(stoneVal.size() / 2));
-			*iter = second;
-			stones.insert(iter, first);
+			return std::make_pair( first, second );
 		};
 
-	for (std::size_t i = 0; i < 25; i++)
+	std::map<std::uint64_t, std::size_t> nextStones;
+	for (std::size_t i = 0; i < 75; i++)
 	{
-		for (auto iter = stones.begin(); iter != stones.end(); iter++)
+		for (auto [value, count] : stones )
 		{
-			if (*iter == 0)
+			if (value == 0)
 			{
-				*iter = 1;
+				nextStones[1] += count;
 			}
-			else if (shouldSplit(*iter))
+			else if (shouldSplit(value))
 			{
-				splitStone(iter);
+				auto split = splitStone(value);
+				nextStones[split.first] += count;
+				nextStones[split.second] += count;
 			}
 			else
 			{
-				*iter *= 2024;
+				nextStones[value * 2024] += count;
 			}
 		}
-	}
+		std::swap( stones, nextStones );
+		nextStones.clear();
 
-	utils::PrintResult(stones.size(), startTime);
+		if( i == 24 )
+		{
+			auto totalStones = std::ranges::fold_left( std::views::values( std::views::all( stones ) ), 0, std::plus<std::size_t>() );
+			utils::PrintResult( totalStones, startTime );
+		}
+	}
 
 	//Part 2
-	for (std::size_t i = 25; i < 75; i++)
-	{
-		for (auto iter = stones.begin(); iter != stones.end(); iter++)
-		{
-			if (*iter == 0)
-			{
-				*iter = 1;
-			}
-			else if (shouldSplit(*iter))
-			{
-				splitStone(iter);
-			}
-			else
-			{
-				*iter *= 2024;
-			}
-		}
-	}
-
-	utils::PrintResult(stones.size(), startTime);
+	auto totalStones = std::ranges::fold_left( std::views::values( std::views::all( stones ) ), 0, std::plus<std::size_t>() );
+	utils::PrintResult( totalStones, startTime);
 
 	return 0;
 }
