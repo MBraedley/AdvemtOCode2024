@@ -96,71 +96,69 @@ int main()
 	//Part 2
 
 	totalCost = 0;
+
+	const utils::Pos dirTopLeft( -1, -1 );
+	const utils::Pos dirTop( 0, -1 );
+	const utils::Pos dirTopRight( 1, -1 );
+	const utils::Pos dirRight( 1, 0 );
+	const utils::Pos dirBottomRight( 1, 1 );
+	const utils::Pos dirBottom( 0, 1 );
+	const utils::Pos dirBottomLeft( -1, 1 );
+	const utils::Pos dirLeft( -1, 0 );
+
 	for( auto region : regions )
 	{
-		auto start = *region.begin();	//Due to sorting, this is guarenteed to be where there's a fence corner in the top left
+		std::uint64_t corners = 0;
 
-		//Use left hand rule for solving a maze to map the perimeter.  Every time we make a turn, we have a new side.
-		utils::Pos facing( 1, 0 );
-		utils::Pos leftHand( 0, -1 );
-		std::size_t corners = 0;
-
-		bool isExterior = false;
-		std::set<char> borderTypes;
-
-		auto turnRight = [&]()
-			{
-				std::swap( facing.X, facing.Y );
-				facing.X *= -1;
-				std::swap( leftHand.X, leftHand.Y );
-				leftHand.X *= -1;
-				corners++;
-			};
-		auto turnLeft = [&]()
-			{
-				std::swap( facing.X, facing.Y );
-				facing.Y *= -1;
-				std::swap( leftHand.X, leftHand.Y );
-				leftHand.Y *= -1;
-				corners++;
-			};
-
-		auto p = start;
-		do
+		for( const auto& p : region )
 		{
-			if( !isExterior && !backup.contains( p + leftHand ) )
+			bool tl = region.contains( p + dirTopLeft );
+			bool t = region.contains( p + dirTop );
+			bool tr = region.contains( p + dirTopRight );
+			bool r = region.contains( p + dirRight );
+			bool br = region.contains( p + dirBottomRight );
+			bool b = region.contains( p + dirBottom );
+			bool bl = region.contains( p + dirBottomLeft );
+			bool l = region.contains( p + dirLeft );
+
+			if( !l && !t )
 			{
-				isExterior = true;
+				corners++;
+			}
+			else if( l && t && !tl )
+			{
+				corners++;
 			}
 
-			if( !isExterior && !region.contains( p + leftHand ) && backup.contains( p + leftHand ) )
+			if( !r && !t )
 			{
-				borderTypes.insert( backup[p + leftHand] );
+				corners++;
+			}
+			else if( r && t && !tr )
+			{
+				corners++;
 			}
 
-			if( region.contains( p + leftHand ) )
+			if( !l && !b )
 			{
-				turnLeft();
-				p = p + facing;
+				corners++;
 			}
-			else if( region.contains( p + facing ) )
+			else if( l && b && !bl )
 			{
-				p = p + facing;
+				corners++;
 			}
-			else
-			{
-				turnRight();
-			}
-		} while( !( p == start && facing == utils::Pos(1, 0) ) );
 
-		std::size_t fenceCost = region.size() * corners;
-
-		if( !isExterior && borderTypes.size() == 1 )
-		{
-			assert( false );
+			if( !r && !b )
+			{
+				corners++;
+			}
+			else if( r && b && !br )
+			{
+				corners++;
+			}
 		}
 
-		totalCost += fenceCost;
+		totalCost += corners * region.size();
 	}
 
 	utils::PrintResult( totalCost, startTime );
