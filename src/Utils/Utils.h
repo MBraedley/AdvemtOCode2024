@@ -161,7 +161,10 @@ namespace utils
 			}
 		}
 
-		constexpr bool operator==(const utils::Pos& rhs) const = default;
+		constexpr bool operator==( const utils::Pos& rhs ) const
+		{
+			return this->X == rhs.X && this->Y == rhs.Y;
+		}
 	};
 }
 

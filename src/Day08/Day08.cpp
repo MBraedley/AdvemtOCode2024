@@ -34,7 +34,7 @@ int main()
 		{
 			if (char c = map[y][x]; c != '.')
 			{
-				antennas[c].emplace_back(x, y);
+				antennas[c].emplace_back(static_cast<int>(x), static_cast<int>(y));
 			}
 		}
 	}

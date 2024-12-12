@@ -38,7 +38,7 @@ int main()
 		{
 			if (line[col] == '#')
 			{
-				obstacles.emplace(col, row);
+				obstacles.emplace( static_cast<int>(col), static_cast<int>(row) );
 			}
 			else if (line[col] == '^')
 			{
