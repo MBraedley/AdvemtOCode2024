@@ -128,20 +128,20 @@ namespace utils
 	{
 	public:
 		constexpr Pos() = default;
-		constexpr Pos(int x, int y) :
+		constexpr Pos(std::int64_t x, std::int64_t y) :
 			X(x), Y(y)
 		{
 		}
 
-		int X = 0;
-		int Y = 0;
+		std::int64_t X = 0;
+		std::int64_t Y = 0;
 
 		std::set<Pos> GetUnboundedNeighbours(bool includeDiagonals = true) const;
 		std::set<Pos> GetNeighbours(const std::vector<std::string>& map, bool includeDiagonals = true) const;
 		std::set<Pos> GetNeighbours(const Connections& connections, const std::vector<std::string>& map) const;
-		constexpr int GetManDistance( const Pos& other ) const
+		constexpr std::int64_t GetManDistance( const Pos& other ) const
 		{
-			auto abs = []( int i ) -> int
+			auto abs = [](std::int64_t i ) -> std::int64_t
 				{
 					return (i >= 0 ? i : -i);
 				};
@@ -177,5 +177,18 @@ constexpr utils::Pos operator+(const utils::Pos& lhs, const utils::Pos& rhs)
 constexpr utils::Pos operator-(const utils::Pos& lhs, const utils::Pos& rhs)
 {
 	utils::Pos ret(lhs.X - rhs.X, lhs.Y - rhs.Y);
+	return ret;
+}
+
+template<std::integral T>
+constexpr utils::Pos operator*(const utils::Pos& lhs, const T& rhs)
+{
+	utils::Pos ret(lhs.X * rhs, lhs.Y * rhs);
+	return ret;
+}
+
+constexpr utils::Pos operator%(const utils::Pos& lhs, const utils::Pos& rhs)
+{
+	utils::Pos ret(lhs.X % rhs.X, lhs.Y % rhs.Y);
 	return ret;
 }
