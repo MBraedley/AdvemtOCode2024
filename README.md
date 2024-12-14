@@ -18,6 +18,7 @@ The following C++ dependencies are gathered with Conan (nothing for you to do)
 
 - [CTRE](https://github.com/hanickadot/compile-time-regular-expressions)
 - [BS::thread_pool](https://github.com/bshoshany/thread-pool)
+- [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page)
 - [nlohmann json](https://github.com/nlohmann/json) (not actually used)
 
 ### Build

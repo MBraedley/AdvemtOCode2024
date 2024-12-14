@@ -34,9 +34,10 @@ endfunction()
 find_package(ctre)
 find_package(nlohmann_json)
 find_package(bshoshany-thread-pool)
+find_package(Eigen3)
 
 add_library(Utils STATIC "src/Utils/Utils.cpp" "src/Utils/Utils.h")
-target_link_libraries(Utils PUBLIC ctre::ctre nlohmann_json::nlohmann_json bshoshany-thread-pool::bshoshany-thread-pool)
+target_link_libraries(Utils PUBLIC ctre::ctre nlohmann_json::nlohmann_json bshoshany-thread-pool::bshoshany-thread-pool Eigen3::Eigen)
 
 add_aoc_day("Day01")
 add_aoc_day("Day02")

@@ -16,6 +16,7 @@ class AdventOfCode2024(ConanFile):
         self.requires("ctre/[*]")
         self.requires("nlohmann_json/[*]")
         self.requires("bshoshany-thread-pool/[*]")
+        self.requires("eigen/[*]")
 
     def layout(self):
         cmake_layout(self)

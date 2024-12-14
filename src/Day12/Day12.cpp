@@ -4,8 +4,6 @@
 #include "Day12.h"
 #include "Utils.h"
 
-#include <cassert>
-
 int main()
 {
 	auto startTime = std::chrono::system_clock::now();
@@ -47,7 +45,7 @@ int main()
 		auto flood = [&]( const utils::Pos& p )
 			{
 				auto possibleNeighbours = p.GetNeighbours( input, false );
-				for( auto neighbour : possibleNeighbours )
+				for( const auto& neighbour : possibleNeighbours )
 				{
 					if( map.contains( neighbour ) && map[neighbour] == name )
 					{
@@ -71,15 +69,15 @@ int main()
 
 	std::size_t totalCost = 0;
 
-	for( auto region : regions )
+	for( const auto& region : regions )
 	{
 		std::size_t fenceCount = 0;
 		std::size_t area = region.size();
 
-		for( auto plot : region )
+		for( const auto& plot : region )
 		{
 			auto neighbours = plot.GetUnboundedNeighbours( false );
-			for( auto neighbour : neighbours )
+			for( const auto& neighbour : neighbours )
 			{
 				if( !region.contains( neighbour ) )
 				{
@@ -106,7 +104,7 @@ int main()
 	const utils::Pos dirBottomLeft( -1, 1 );
 	const utils::Pos dirLeft( -1, 0 );
 
-	for( auto region : regions )
+	for( const auto& region : regions )
 	{
 		std::uint64_t corners = 0;
 
