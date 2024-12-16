@@ -40,49 +40,6 @@ int main()
 	std::vector<std::string> warehouse = std::views::all(input) | std::views::take_while([](const std::string& line) {return !line.empty(); }) | std::ranges::to<std::vector<std::string>>();
 	std::string instructions = std::views::join(std::views::all(input) | std::views::drop(warehouse.size() + 1)) | std::ranges::to<std::string>();
 
-	std::set<utils::Pos> walls;
-	std::set<utils::Pos> boxes;
-	utils::Pos robot;
-
-	for (int y = 0; y < warehouse.size(); y++)
-	{
-		for (int x = 0; x < warehouse[y].size(); x++)
-		{
-			if (warehouse[y][x] == '#')
-			{
-				walls.emplace(x, y);
-			}
-			else if (warehouse[y][x] == 'O')
-			{
-				boxes.emplace(x, y);
-			}
-			else if (warehouse[y][x] == '@')
-			{
-				robot.X = x;
-				robot.Y = y;
-			}
-		}
-	}
-
-	std::function<void(utils::Pos, utils::Pos)> tryPush;
-	tryPush = [&](utils::Pos pushPoint, utils::Pos dir)
-		{
-			if (walls.contains(pushPoint + dir))
-			{
-				return;
-			}
-			else if (boxes.contains(pushPoint + dir))
-			{
-				tryPush(pushPoint + dir, dir);
-			}
-			else
-			{
-				boxes.emplace(pushPoint + dir);
-				robot = robot + dir;
-				boxes.erase(robot);
-			}
-		};
-
 	const std::map<char, utils::Pos> dirs
 	{
 		{'^', {0, -1}},
@@ -91,44 +48,117 @@ int main()
 		{'>', {1, 0}},
 	};
 
-	auto printGrid = [&]()
-		{
-			auto grid = std::views::repeat(std::views::repeat('.', warehouse[0].size()), warehouse.size()) | std::ranges::to<std::vector<std::string>>();
-			for (const auto& wall : walls)
-			{
-				grid[wall.Y][wall.X] = '#';
-			}
-
-			for (const auto& box : boxes)
-			{
-				grid[box.Y][box.X] = 'O';
-			}
-
-			grid[robot.Y][robot.X] = '@';
-
-			utils::PrintGrid(grid);
-			std::cout << "\n\n";
-		};
-
-	for (char dir : instructions)
+	//Part 1
 	{
-		if (!walls.contains(robot + dirs.at(dir)) && !boxes.contains(robot + dirs.at(dir)))
+		std::set<utils::Pos> walls;
+		std::set<utils::Pos> boxes;
+		utils::Pos robot;
+
+		for (int y = 0; y < warehouse.size(); y++)
 		{
-			robot = robot + dirs.at(dir);
-		}
-		else
-		{
-			tryPush(robot, dirs.at(dir));
+			for (int x = 0; x < warehouse[y].size(); x++)
+			{
+				if (warehouse[y][x] == '#')
+				{
+					walls.emplace(x, y);
+				}
+				else if (warehouse[y][x] == 'O')
+				{
+					boxes.emplace(x, y);
+				}
+				else if (warehouse[y][x] == '@')
+				{
+					robot.X = x;
+					robot.Y = y;
+				}
+			}
 		}
 
-		//printGrid();
+		std::function<void(utils::Pos, utils::Pos)> tryPush;
+		tryPush = [&](utils::Pos pushPoint, utils::Pos dir)
+			{
+				if (walls.contains(pushPoint + dir))
+				{
+					return;
+				}
+				else if (boxes.contains(pushPoint + dir))
+				{
+					tryPush(pushPoint + dir, dir);
+				}
+				else
+				{
+					boxes.emplace(pushPoint + dir);
+					robot = robot + dir;
+					boxes.erase(robot);
+				}
+			};
+
+		auto printGrid = [&]()
+			{
+				auto grid = std::views::repeat(std::views::repeat('.', warehouse[0].size()), warehouse.size()) | std::ranges::to<std::vector<std::string>>();
+				for (const auto& wall : walls)
+				{
+					grid[wall.Y][wall.X] = '#';
+				}
+
+				for (const auto& box : boxes)
+				{
+					grid[box.Y][box.X] = 'O';
+				}
+
+				grid[robot.Y][robot.X] = '@';
+
+				utils::PrintGrid(grid);
+				std::cout << "\n\n";
+			};
+
+		for (char dir : instructions)
+		{
+			if (!walls.contains(robot + dirs.at(dir)) && !boxes.contains(robot + dirs.at(dir)))
+			{
+				robot = robot + dirs.at(dir);
+			}
+			else
+			{
+				tryPush(robot, dirs.at(dir));
+			}
+
+			//printGrid();
+		}
+
+		std::uint32_t gpsCoords = std::ranges::fold_left(std::views::all(boxes) | std::views::transform([](const utils::Pos& p) { return p.X + p.Y * 100; }), 0, std::plus<std::uint32_t>());
+
+		utils::PrintResult(gpsCoords, startTime);
 	}
 
-	std::uint32_t gpsCoords = std::ranges::fold_left(std::views::all(boxes) | std::views::transform([](const utils::Pos& p) { return p.X + p.Y * 100; }), 0, std::plus<std::uint32_t>());
-
-	utils::PrintResult(gpsCoords, startTime);
-
 	//Part 2
+	{
+		std::set<utils::Pos> walls;
+		std::set<std::pair<utils::Pos, utils::Pos>> boxes;
+		utils::Pos robot;
+
+		for (int y = 0; y < warehouse.size(); y++)
+		{
+			for (int x = 0; x < warehouse[y].size(); x++)
+			{
+				if (warehouse[y][x] == '#')
+				{
+					walls.emplace(2 * x, y);
+					walls.emplace(2 * x + 1, y);
+				}
+				else if (warehouse[y][x] == 'O')
+				{
+					boxes.emplace(std::make_pair<utils::Pos, utils::Pos>({ 2 * x, y }, { 2 * x + 1, y }));
+				}
+				else if (warehouse[y][x] == '@')
+				{
+					robot.X = 2 * x;
+					robot.Y = y;
+				}
+			}
+		}
+
+	}
 
 	return 0;
 }
