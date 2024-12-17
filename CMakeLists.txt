@@ -39,6 +39,8 @@ find_package(Eigen3)
 add_library(Utils STATIC "src/Utils/Utils.cpp" "src/Utils/Utils.h")
 target_link_libraries(Utils PUBLIC ctre::ctre nlohmann_json::nlohmann_json bshoshany-thread-pool::bshoshany-thread-pool Eigen3::Eigen)
 
+add_library(OpcodeComputer STATIC "src/OpcodeComputer/OpcodeComputer.h" "src/OpcodeComputer/OpcodeComputer.cpp")
+
 add_aoc_day("Day01")
 add_aoc_day("Day02")
 add_aoc_day("Day03")
@@ -64,3 +66,6 @@ add_aoc_day("Day22")
 add_aoc_day("Day23")
 add_aoc_day("Day24")
 add_aoc_day("Day25")
+
+target_include_directories(Day17 PUBLIC "src/OpcodeComputer")
+target_link_libraries(Day17 PUBLIC OpcodeComputer)
