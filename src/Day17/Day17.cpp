@@ -7,6 +7,7 @@
 
 #include <ranges>
 #include <cassert>
+#include <functional>
 
 int main()
 {
@@ -33,31 +34,27 @@ int main()
 
 	//Part 2
 
-	regA = 0;
-	std::string rProgStr( progStr.rbegin(), progStr.rend() );
-	for( std::size_t i = 0; i < program.size() / 2; i++ )
-	{
-		regA = regA << 3;
-		for( std::size_t j = 0; j < 8; j++ )
+	std::function<void( std::uint64_t )> checkVal;
+	checkVal = [&]( std::uint64_t regA )
 		{
-			OpcodeComputer comp2( program, regA + j, regB, regC );
-			std::string s = comp2.Run();
-			std::string rs( s.rbegin(), s.rend() );
-			if( rProgStr.starts_with( rs ) )
+			for( std::size_t j = 0; j < 8; j++ )
 			{
-				regA += j;
-				break;
-			}
-			else if( j == 7 )
-			{
-				assert( false );
-			}
-		}
-	}
+				OpcodeComputer comp2( program, regA + j, regB, regC );
+				std::string s = comp2.Run();
+				if( s == progStr )
+				{
+					utils::PrintResult( regA + j, startTime );
+					return;
+				}
+				else if( progStr.ends_with( s ) )
+				{
+					checkVal( (regA + j) << 3 );
+				}
 
-	OpcodeComputer comp2( program, regA, regB, regC );
-	utils::PrintResult( comp2.Run(), startTime );
-	utils::PrintResult( regA, startTime );
+			}
+		};
 
+	checkVal( 0 );
+	
 	return 0;
 }
