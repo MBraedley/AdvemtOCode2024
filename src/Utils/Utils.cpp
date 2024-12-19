@@ -188,3 +188,8 @@ utils::Connections operator&(const utils::Connections& lhs, const utils::Connect
 
 	return ret;
 }
+
+std::ostream& operator<<( std::ostream& os, const utils::Pos& p )
+{
+	return os << p.X << "," << p.Y;
+}
