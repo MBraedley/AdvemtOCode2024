@@ -5,7 +5,9 @@
 #include "Utils.h"
 
 #include <ranges>
+#include <algorithm>
 #include <functional>
+#include <cassert>
 
 int main()
 {
@@ -126,7 +128,10 @@ int main()
 			//printGrid();
 		}
 
-		std::uint32_t gpsCoords = std::ranges::fold_left(std::views::all(boxes) | std::views::transform([](const utils::Pos& p) { return p.X + p.Y * 100; }), 0, std::plus<std::uint32_t>());
+		std::uint32_t gpsCoords = std::ranges::fold_left(
+			std::views::all(boxes)
+			| std::views::transform([](const utils::Pos& p) { return p.X + p.Y * 100; }),
+			0, std::plus<std::uint32_t>());
 
 		utils::PrintResult(gpsCoords, startTime);
 	}
@@ -158,6 +163,51 @@ int main()
 			}
 		}
 
+		std::function<bool(std::set<utils::Pos>, utils::Pos)> tryPush;
+		tryPush = [&](std::set<utils::Pos> pushPoints, utils::Pos dir) -> bool
+			{
+				//if (dir.Y == 0)
+				//{
+				//	assert(pushPoints.size() == 1);
+				//	auto pushPoint = *pushPoints.begin();
+
+				//	if (walls.contains(pushPoint + dir))
+				//	{
+				//		return;
+				//	}
+				//	else if (boxes.contains(pushPoint + dir))
+				//	{
+				//		tryPush(pushPoint + dir, dir);
+				//	}
+				//	else
+				//	{
+				//		boxes.emplace(pushPoint + dir);
+				//		robot = robot + dir;
+				//		boxes.erase(robot);
+				//	}
+				//}
+
+				for (const utils::Pos& p : pushPoints)
+				{
+					if (walls.contains(p + dir))
+					{
+						return false;
+					}
+				}
+
+				auto boxSet = std::views::all(boxes)
+					| std::views::filter([&](const std::pair<utils::Pos, utils::Pos>& box)
+						{
+							return pushPoints.contains(box.first - dir) || pushPoints.contains(box.second - dir);
+						});
+
+				if (boxSet.empty())
+				{
+					return true;
+				}
+				
+
+			};
 	}
 
 	return 0;
