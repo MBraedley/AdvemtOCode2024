@@ -233,28 +233,37 @@ int main()
 	//Part 2
 
 	complexity = 0;
+	std::map<std::pair<char, char>, std::uint64_t> costCache;
 
 	for (const std::string& code : input)
 	{
-		std::stringstream bot1;
+		std::uint64_t instCount = 0;
 		for (const auto& inst : instructionalize("A" + code))
 		{
-			bot1 << doorKeypad.at(inst);
-		}
-
-		std::string botn = bot1.str();
-		for (int n = 0; n < 25; n++)
-		{
-			std::stringstream botStrm;
-			for (const auto& inst : instructionalize("A" + botn))
+			if (costCache.contains(inst))
 			{
-				botStrm << controllerKeypad.at(inst);
+				instCount += costCache[inst];
 			}
-			botn = botStrm.str();
+			else
+			{
+				std::string botn = doorKeypad.at(inst);
+				for (int n = 0; n < 25; n++)
+				{
+					std::stringstream botStrm;
+					for (const auto& controlInst : instructionalize("A" + botn))
+					{
+						botStrm << controllerKeypad.at(controlInst);
+					}
+					botn = botStrm.str();
+				}
+
+				instCount += botn.size();
+				costCache[inst] = botn.size();
+			}
 		}
 		
 		std::uint64_t codeVal = std::stoull(code.substr(0, 3));
-		complexity += codeVal * botn.size();
+		complexity += codeVal * instCount;
 	}
 
 	utils::PrintResult(complexity, startTime);
