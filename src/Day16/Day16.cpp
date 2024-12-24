@@ -31,9 +31,6 @@ int main()
 	assert( input[startPos.Y][startPos.X] == 'S' );
 	assert( input[endPos.Y][endPos.X] == 'E' );
 
-	//utils::Pos pos = startPos;
-	//utils::Pos dir( 1, 0 );
-
 	auto turnRight = [&]( utils::Pos dir ) -> utils::Pos
 		{
 			std::swap( dir.X, dir.Y );
@@ -72,6 +69,7 @@ int main()
 			}
 		};
 
+	positionCosts.emplace(std::make_pair(startPos, utils::Pos(1, 0)), 0);
 	addToQueue( { startPos, utils::Pos( 1, 0 ), 0 } );
 
 	while( !moveQueue.empty() )
@@ -91,44 +89,64 @@ int main()
 		}
 	}
 
-	auto endPosVals = std::views::values( std::views::all( positionCosts ) | std::views::filter( [&]( const std::pair<std::pair<utils::Pos, utils::Pos>, std::size_t>& p ) { return p.first.first == endPos; } ) );
+	auto endPosVals = std::views::all(positionCosts)
+		| std::views::filter([&](const std::pair<std::pair<utils::Pos, utils::Pos>, std::size_t>& p) { return p.first.first == endPos; })
+		| std::ranges::to<std::vector<std::pair<std::pair<utils::Pos, utils::Pos>, std::size_t>>>();
 
-	std::ranges::for_each( endPosVals, [&]( const std::size_t& val )
-		{
-			utils::PrintResult( val, startTime );
-		} );
+	auto bestEnd = *std::min_element(endPosVals.begin(), endPosVals.end(), [](const auto& lhs, const auto& rhs) {return lhs.second < rhs.second; });
+
+	utils::PrintResult( bestEnd.second, startTime);
+
+	//for (const auto& [pd, c] : endPosVals)
+	//{
+	//	std::cout << pd.second << ": " << c << "\n";
+	//}
 
 	//Part 2
 
-	std::set<utils::Pos> goodStands;
+	std::set<utils::Pos> onPath;
+	std::queue<positionCost> pathFinding;
 
-	std::stack<std::queue<utils::Pos>> fastestRoutes;
-	fastestRoutes.push( std::queue<utils::Pos>{} );
-
-	addToQueue( { startPos, utils::Pos( 1, 0 ), 0 } );
-
-	while( !moveQueue.empty() )
-	{
-		auto [p, d, c] = moveQueue.top();
-		moveQueue.pop();
-
-		assert( positionCosts.contains( std::make_pair( p, d ) ) );
-
-		if( positionCosts[std::make_pair( p, d )] == c )
+	auto addToQueue2 = [&](const positionCost& currentPos)
 		{
-			for( const auto& n : p.GetNeighbours( input, false ) )
+			const auto& [pos, dir, cost] = currentPos;
+			auto takeStep = pos - dir;
+			if (input[takeStep.Y][takeStep.X] != '#')
 			{
-				if( input[n.Y][n.X] == '#' )
-				{
-					goodStands.insert( n );
-				}
+				pathFinding.push({ takeStep, dir, cost - 1 });
 			}
 
-			addToQueue( { p,d,c } );
+			auto lhs = turnLeft(dir);
+			takeStep = pos - lhs;
+			if (input[takeStep.Y][takeStep.X] != '#')
+			{
+				pathFinding.push({ pos, lhs, cost - 1000 });
+			}
+
+			auto rhs = turnRight(dir);
+			takeStep = pos - rhs;
+			if (input[takeStep.Y][takeStep.X] != '#')
+			{
+				pathFinding.push({ pos, rhs, cost - 1000 });
+			}
+		};
+
+	onPath.insert(bestEnd.first.first);
+	addToQueue2({ bestEnd.first.first, bestEnd.first.second, bestEnd.second });
+
+	while (!pathFinding.empty())
+	{
+		auto [p, d, c] = pathFinding.front();
+		pathFinding.pop();
+
+		if (positionCosts.contains(std::make_pair(p, d)) && positionCosts[std::make_pair(p, d)] == c)
+		{
+			onPath.emplace(p);
+			addToQueue2({ p, d, c });
 		}
 	}
 
-	utils::PrintResult( goodStands.size(), startTime );
+	utils::PrintResult(onPath.size(), startTime);
 
 	return 0;
 }
