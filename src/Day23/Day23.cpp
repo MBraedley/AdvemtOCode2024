@@ -95,47 +95,49 @@ int main()
 		std::vector<std::string> out;
 		std::ranges::set_intersection(lhsConns, rhsConns, std::back_inserter(out));
 
-		//Part 1
-		if (lhs.starts_with("t") || rhs.starts_with("t"))
+		if (!out.empty())
 		{
-			for (const auto& ohs : out)
+			//Part 1
+			if (lhs.starts_with("t") || rhs.starts_with("t"))
 			{
-				rings.insert(std::set<std::string>{ lhs, rhs, ohs });
+				for (const auto& ohs : out)
+				{
+					rings.insert(std::set<std::string>{ lhs, rhs, ohs });
+				}
 			}
-		}
 
-		//Part 2
-		std::set<std::string> out2 = std::ranges::to<std::set<std::string>>(out);
-		out2.insert(lhs);
-		out2.insert(rhs);
-		connectionGroups.emplace(lhs, out2);
-		connectionGroups.emplace(rhs, out2);
+			//Part 2
+			std::set<std::string> out2 = std::ranges::to<std::set<std::string>>(out);
+			out2.insert(lhs);
+			out2.insert(rhs);
+			connectionGroups.emplace(lhs, out2);
+			connectionGroups.emplace(rhs, out2);
+		}
 	}
 
 	utils::PrintResult(rings.size(), startTime);
 
 	//Part 2
-
-	//auto lanGroups = std::views::all(connectionGroups) | std::views::filter([&](const std::pair<std::string, std::set<std::string>>& group) -> bool
-	//	{
-	//		for (const std::string& comp : group.second)
-	//		{
-	//			if (connectionGroups[comp] != group.second)
-	//			{
-	//				return false;
-	//			}
-	//		}
-	//		return true;
-	//	});
-
-	//auto lanGroup = std::ranges::max(std::views::values(lanGroups), {}, &std::set<std::string>::size);
-	//utils::PrintResult(lanGroup | std::views::join_with(","sv) | std::ranges::to<std::string>(), startTime);
-
-	for (const auto& [comp, group] : connectionGroups)
+	for (auto& [_, group] : connectionGroups)
 	{
-		std::cout << comp << ": ";
-		utils::PrintResult(group | std::views::join_with(","sv) | std::ranges::to<std::string>(), startTime);
+		group = std::views::all(group)
+			| std::views::filter([&](const std::string& comp)
+				{
+					return connectionGroups.contains(comp);
+				})
+			| std::ranges::to<std::set<std::string>>();
 	}
+	
+	std::map<std::string, std::uint32_t> counts;
+
+	std::ranges::for_each(std::views::all(connectionGroups) | std::views::values, [&](const std::set<std::string>& group)
+		{
+			counts[group | std::views::join_with(","sv) | std::ranges::to<std::string>()]++;
+		});
+
+	auto biggestGroup = *std::ranges::max_element(counts, [](const auto& lhs, const auto& rhs) {return lhs.second < rhs.second; });
+
+	utils::PrintResult(biggestGroup.first, startTime);
 
 	return 0;
 }
