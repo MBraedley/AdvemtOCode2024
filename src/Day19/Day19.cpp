@@ -6,7 +6,6 @@
 
 #include <ranges>
 #include <functional>
-//#include <regex>	//bleh, I really want to do this with ctre
 
 int main()
 {
@@ -24,15 +23,22 @@ int main()
 		| std::views::transform( []( const std::string& s ) { return std::make_pair( s[0], s ); })
 		| std::ranges::to<std::multimap<char, std::string>>();
 
-	std::map<std::string, std::uint32_t> towels = std::views::zip(
+	std::map<std::string, std::uint64_t> towels = std::views::zip(
 		input | std::views::drop( 2 ),
 		std::views::repeat( 0, input.size() - 2 ) )
-		| std::ranges::to<std::map<std::string, std::uint32_t>>();
+		| std::ranges::to<std::map<std::string, std::uint64_t>>();
 
-	std::function<std::uint32_t( const std::string_view )> findPattern;
-	findPattern = [&]( const std::string_view tStack ) -> std::uint32_t
+	std::map<std::string, std::uint64_t> memoPad;
+
+	std::function<std::uint64_t( const std::string_view, std::map<std::string, std::uint64_t>& )> findPattern;
+	findPattern = [&]( const std::string_view tStack, std::map<std::string, std::uint64_t>& memoPad ) -> std::uint64_t
 		{
-			std::uint32_t count = 0;
+			if (memoPad.contains(tStack.data()))
+			{
+				return memoPad[tStack.data()];
+			}
+
+			std::uint64_t count = 0;
 			const auto [begin, end] = subPatterns.equal_range( tStack[0] );
 			for( auto iter = begin; iter != end; iter++ )
 			{
@@ -42,47 +48,25 @@ int main()
 				}
 				else if( tStack.starts_with( iter->second ) )
 				{
-					count += findPattern(tStack.data() + iter->second.size());
+					count += findPattern(tStack.data() + iter->second.size(), memoPad);
 				}
 			}
 
+			memoPad[tStack.data()] = count;
 			return count;
 		};
 
 	for( auto& [towel, count] : towels )
 	{
-		count = findPattern( towel );
+		count = findPattern( towel, memoPad );
 	}
 
-	std::uint32_t anyMatch = std::count_if( towels.begin(), towels.end(), []( const std::pair<std::string, std::uint32_t>& t ) { return t.second > 0; } );
+	std::uint64_t anyMatch = std::count_if( towels.begin(), towels.end(), []( const std::pair<std::string, std::uint64_t>& t ) { return t.second > 0; } );
 	utils::PrintResult( anyMatch, startTime );
 
 	//Part 2
-	std::uint32_t allMatch = std::ranges::fold_left( std::views::values( towels ), 0, std::plus() );
+	std::uint64_t allMatch = std::ranges::fold_left( std::views::values( towels ), 0, std::plus() );
 	utils::PrintResult( allMatch, startTime );
-
-	//std::string towelsRegex = "(" + (input[0] | std::views::split( ", "sv ) | std::views::join_with( "|"sv ) | std::ranges::to<std::string>()) + ")+";
-
-	//std::regex re( towelsRegex );
-
-	//std::uint32_t validCount = 0;
-
-	//for( const auto& t : towels )
-	//{
-	//	try
-	//	{
-	//		if( std::regex_match( t, re ) )
-	//		{
-	//			validCount++;
-	//		}
-	//	}
-	//	catch( std::regex_error e )
-	//	{
-	//		std::cout << e.what() << "\n";
-	//	}
-	//}
-
-	//utils::PrintResult( validCount, startTime );
 
 	return 0;
 }
