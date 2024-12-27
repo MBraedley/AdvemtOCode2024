@@ -29,8 +29,8 @@ int main()
 		std::views::repeat( 0, input.size() - 2 ) )
 		| std::ranges::to<std::map<std::string, std::uint32_t>>();
 
-	std::function<std::uint32_t( const std::string& )> findPattern;
-	findPattern = [&]( const std::string& tStack ) -> std::uint32_t
+	std::function<std::uint32_t( const std::string_view )> findPattern;
+	findPattern = [&]( const std::string_view tStack ) -> std::uint32_t
 		{
 			std::uint32_t count = 0;
 			const auto [begin, end] = subPatterns.equal_range( tStack[0] );
@@ -42,7 +42,7 @@ int main()
 				}
 				else if( tStack.starts_with( iter->second ) )
 				{
-					count += findPattern( tStack.substr( iter->second.size() ) );
+					count += findPattern(tStack.data() + iter->second.size());
 				}
 			}
 
